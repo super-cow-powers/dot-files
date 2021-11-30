@@ -9,6 +9,52 @@
 
 (show-paren-mode 1)
 
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
+(eval-when-compile
+  (require 'use-package))
+
+;; LSP
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :config (
+           ;; disable inline documentation
+           (setq lsp-ui-sideline-enable nil)
+           ;; disable showing docs on hover at the top of the window
+           (setq lsp-ui-doc-enable nil))
+  )
+
+;; Company
+(use-package company
+  :hook (after-init-hook . 'global-company-mode)
+  )
+
+;; Flycheck
+(use-package flycheck
+  :hook ('after-init-hook . 'global-flycheck-mode)
+  )
+
+;;Yas
+(use-package yasnippet
+  :config
+  (yas-global-mode 1)
+  )
+(use-package yasnippet-snippets)
+
+;; AucTex
+(use-package tex
+  :ensure auctex
+  )
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+;; (setq-default TeX-master nil) ;;Ask for master file
+(add-hook 'TeX-mode-hook 'prettify-symbols-mode)
+(add-hook 'LaTeX-mode-hook 'prettify-symbols-mode)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -28,25 +74,5 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode
-  :config (progn
-            ;; disable inline documentation
-            (setq lsp-ui-sideline-enable nil)
-            ;; disable showing docs on hover at the top of the window
-            (setq lsp-ui-doc-enable nil))
-  )
-
-;; Company
-(add-hook 'after-init-hook 'global-company-mode)
-
 ;; Gopls
 (add-hook 'go-mode-hook 'lsp-deferred)
-
-;; AUCTex
-(setq TeX-auto-save t)
-(setq TeX-parse-self t)
-;; (setq-default TeX-master nil) ;;Ask for master file
-(add-hook 'TeX-mode-hook 'prettify-symbols-mode)
-(add-hook 'LaTeX-mode-hook 'prettify-symbols-mode)
